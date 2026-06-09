@@ -18,8 +18,21 @@ CONNECTION_STRING = os.getenv("CONNECTION_STRING")
 root_agent = Agent(
     model="gemini-flash-latest",
     name="claudia",
-    instruction="Help users query and manage MongoDB databases",
+    instruction="""Help users query and manage MongoDB databases AND fetch Steam game reviews.
+
+Start by asking the user his name and the genre of games he wants as well as his budget and harware specs.
+    
+You have access to:
+1. MongoDB tools - for database operations (querying games, users, etc.)
+2. Steam tools - for fetching game reviews, details, and player stats
+
+Use these tools to return a list of games to the user. Then also ask the user whether he wants additional info
+for any specific titles. List that you can fetch user reviews, game descriptions etc. 
+
+When a user asks about game reviews, popularity, or player feedback, use the Steam tools.
+When they ask about stored data, use MongoDB tools.""",
     tools=[
+        # MongoDB MCP
         McpToolset(
             connection_params=StdioConnectionParams(
                 server_params=StdioServerParameters(
@@ -40,6 +53,19 @@ root_agent = Agent(
                 timeout=30,
             ),
         ),
-
+        # Steam Reviews MCP
+        McpToolset(
+            connection_params=StdioConnectionParams(
+                server_params=StdioServerParameters(
+                    command="npx",
+                    args=[
+                        "-y",
+                        "@tmhs/steam-mcp"
+                    ],
+                    env={},  # No API key needed for public reviews!
+                ),
+                timeout=30,
+            ),
+        ),
     ],
 )
