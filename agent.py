@@ -1,5 +1,4 @@
 # --- Import all necessary libraries ---
-
 from google.adk.agents import Agent
 from google.adk.tools.mcp_tool import McpToolset
 from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
@@ -11,58 +10,60 @@ load_dotenv()
 
 # For database access, use a connection string:
 CONNECTION_STRING = os.getenv("CONNECTION_STRING")
-# For Atlas management, use API credentials:
-# ATLAS_CLIENT_ID = "YOUR_ATLAS_CLIENT_ID"
-# ATLAS_CLIENT_SECRET = "YOUR_ATLAS_CLIENT_SECRET"
+
 
 root_agent = Agent(
-    model="gemini-flash-latest",
+    model="gemini-3.5-flash",
     name="claudia",
-    instruction="""Help users query and manage MongoDB databases AND fetch Steam game reviews.
+    instruction="""You are CLAUDIA, a gaming concierge.
 
-Start by asking the user his name and the genre of games he wants as well as his budget and harware specs.
+    CRITICAL: To search games by VIBE (e.g., "dystopian cyberpunk", "cozy farming"):
     
-You have access to:
-1. MongoDB tools - for database operations (querying games, users, etc.)
-2. Steam tools - for fetching game reviews, details, and player stats
-
-Use these tools to return a list of games to the user. Then also ask the user whether he wants additional info
-for any specific titles. List that you can fetch user reviews, game descriptions etc. 
-
-When a user asks about game reviews, popularity, or player feedback, use the Steam tools.
-When they ask about stored data, use MongoDB tools.""",
+    STEP 1: Call the MongoDB MCP's `aggregate` tool. 
+    Pass the user's natural language vibe query string directly into the "$vectorSearch" stage using the "queryText" parameter. 
+    (Do NOT attempt to convert the text to numbers; the MongoDB Atlas vector_index handles Voyage AI translation seamlessly).
+    
+    Use this exact JSON payload format for the `aggregate` tool:
+    {{
+        "collection": "games_all", 
+        "pipeline": [{{
+            "$vectorSearch": {{
+                "index": "vector_index",
+                "path": "about_the_game",
+                "queryText": "THE_RAW_USER_VIBE_STRING_HERE",
+                "numCandidates": 100,
+                "limit": 5
+            }}
+        }}]
+    }}
+    
+    STEP 2: Review the matched document items and extract game metadata.
+    
+    STEP 3: Present the matching games cleanly to the user showing their names, prices, and genres.
+    
+    Conversation Flow Requirements:
+    - Actively ask the user for their name, budget constraints, hardware specs, and personal game preferences.
+    - Leverage the Steam MCP to fetch supplementary game reviews and player counts when displaying choices.
+    - Leverage the MongoDB MCP for direct database lookups.
+    """,
     tools=[
-        # MongoDB MCP
+        # MongoDB Database MCP Toolset
         McpToolset(
             connection_params=StdioConnectionParams(
                 server_params=StdioServerParameters(
                     command="npx",
-                    args=[
-                        "-y",
-                        "mongodb-mcp-server",
-                        "--readOnly",  # Remove for write operations
-                    ],
-                    env={
-                        # For database access, use:
-                        "MDB_MCP_CONNECTION_STRING": CONNECTION_STRING,
-                        # For Atlas management, use:
-                        # "MDB_MCP_API_CLIENT_ID": ATLAS_CLIENT_ID,
-                        # "MDB_MCP_API_CLIENT_SECRET": ATLAS_CLIENT_SECRET,
-                    },
+                    args=["-y", "mongodb-mcp-server", "--readOnly"],
+                    env={"MDB_MCP_CONNECTION_STRING": CONNECTION_STRING},
                 ),
                 timeout=30,
             ),
         ),
-        # Steam Reviews MCP
+        # Steam Reviews MCP Toolset
         McpToolset(
             connection_params=StdioConnectionParams(
                 server_params=StdioServerParameters(
                     command="npx",
-                    args=[
-                        "-y",
-                        "@tmhs/steam-mcp"
-                    ],
-                    env={},  # No API key needed for public reviews!
+                    args=["-y", "@tmhs/steam-mcp"]
                 ),
                 timeout=30,
             ),
