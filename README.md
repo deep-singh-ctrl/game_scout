@@ -50,3 +50,10 @@ uv run adk deploy cloud_run --with_ui . -- \
 📄 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 👏 Acknowledgments & Credits
+
+This project utilizes the [Steam MCP](https://github.com/TMHSDigital/steam-mcp) package to fetch live community metrics. 
+- **Copyright:** (c) 2026 TM Hospitality Strategies
+- **License:** Used under the [Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License (CC-BY-NC-ND-4.0)](https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode).
+- **Modifications:** No changes were made to the original Steam MCP source material.
