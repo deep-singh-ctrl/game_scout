@@ -12,7 +12,7 @@ load_dotenv()
 CONNECTION_STRING = os.getenv("CONNECTION_STRING")
 
 root_agent = Agent(
-    model="gemini-3.5-flash", # Note: Ensured standard stable model name format
+    model="gemini-2.5-flash", # Note: Ensured standard stable model name format
     name="claudia",
     instruction="""You are CLAUDIA, a gaming concierge.
 
