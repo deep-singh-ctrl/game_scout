@@ -1,0 +1,8 @@
+{
+  "name": "claudia-mcp-deps",
+  "version": "1.0.0",
+  "dependencies": {
+    "mongodb-mcp-server": "latest",
+    "@tmhs/steam-mcp": "latest"
+  }
+}

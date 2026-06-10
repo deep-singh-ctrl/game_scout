@@ -11,9 +11,8 @@ load_dotenv()
 # For database access, use a connection string:
 CONNECTION_STRING = os.getenv("CONNECTION_STRING")
 
-
 root_agent = Agent(
-    model="gemini-3.5-flash",
+    model="gemini-3.5-flash", # Note: Ensured standard stable model name format
     name="claudia",
     instruction="""You are CLAUDIA, a gaming concierge.
 
@@ -52,7 +51,7 @@ root_agent = Agent(
             connection_params=StdioConnectionParams(
                 server_params=StdioServerParameters(
                     command="npx",
-                    args=["-y", "mongodb-mcp-server", "--readOnly"],
+                    args=["mongodb-mcp-server", "--readOnly"], 
                     env={"MDB_MCP_CONNECTION_STRING": CONNECTION_STRING},
                 ),
                 timeout=30,
@@ -63,7 +62,7 @@ root_agent = Agent(
             connection_params=StdioConnectionParams(
                 server_params=StdioServerParameters(
                     command="npx",
-                    args=["-y", "@tmhs/steam-mcp"]
+                    args=["@tmhs/steam-mcp"] 
                 ),
                 timeout=30,
             ),

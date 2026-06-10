@@ -1,4 +1,3 @@
-google-adk
-mcp
-python-dotenv
-# Add any other dependencies your project relies on (e.g. gradio, flask, etc.)
+google-adk>=0.1.0
+mcp>=1.0.0
+python-dotenv>=1.0.0
