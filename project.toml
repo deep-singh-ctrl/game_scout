@@ -1,0 +1,14 @@
+[[build.buildpacks]]
+id = "google.python.runtime"
+
+[[build.buildpacks]]
+id = "google.python.pip"
+
+[[build.buildpacks]]
+id = "google.nodejs.runtime"
+
+[[build.buildpacks]]
+id = "google.nodejs.npm"
+
+[[build.buildpacks]]
+id = "google.utils.label-image"
