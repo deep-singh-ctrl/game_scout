@@ -1,4 +1,6 @@
 .env
 activate.sh
-.adk
-__pycache__
+__pycache__/
+.venv/
+.adk/
+activate.sh
