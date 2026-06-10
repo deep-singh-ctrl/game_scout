@@ -1,0 +1,4 @@
+google-adk
+mcp
+python-dotenv
+# Add any other dependencies your project relies on (e.g. gradio, flask, etc.)
